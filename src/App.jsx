@@ -2,6 +2,9 @@
   /* The following line can be included in your src/index.js or App.js file */
 }
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useState, useEffect } from "react";
+
+import { getAllPosts } from "./services/getAllPosts.js";
 
 import { Navbar } from "react-bootstrap";
 import { Container } from "react-bootstrap";
@@ -9,7 +12,18 @@ import { Nav } from "react-bootstrap";
 import { Card } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 
+import Row from "react-bootstrap/Row";
+
 export const App = () => {
+  const [allPosts, setAllPosts] = useState([]);
+
+  //get employees from DB and set to employees state var
+  useEffect(() => {
+    getAllPosts().then((postsArray) => {
+      setAllPosts(postsArray);
+    });
+  }, []);
+
   return (
     <>
       <Navbar bg="dark" data-bs-theme="dark">
@@ -25,20 +39,26 @@ export const App = () => {
           </Nav>
         </Container>
       </Navbar>
-      <Container>
-        <Card className="text-center" style={{ width: "12rem" }}>
-          <Card.Body>
-            <Card.Title>Card Title</Card.Title>
-            <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </Card.Text>
-            <br></br>
-            <Button variant="outline-info" size="sm">
-              Henry/Charlie
-            </Button>
-          </Card.Body>
-        </Card>
+      <Container fluid>
+        <Row>
+          {allPosts.map((postObj) => {
+            {
+              console.log(postObj);
+            }
+            return (
+              <Card className="text-center" style={{ width: "12rem" }}>
+                <Card.Body>
+                  <Card.Title>{postObj.title}</Card.Title>
+                  <Card.Text>{postObj.topic.name}</Card.Text>
+                  <br></br>
+                  <Button variant="outline-info" size="sm">
+                    Likes: {postObj.likes.length}
+                  </Button>
+                </Card.Body>
+              </Card>
+            );
+          })}
+        </Row>
       </Container>
     </>
   );
